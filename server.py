@@ -3,6 +3,7 @@
 import json
 import os
 import subprocess
+import sys
 import tempfile
 
 from mcp.server.fastmcp import FastMCP
@@ -10,6 +11,7 @@ from mcp.server.fastmcp import FastMCP
 mcp = FastMCP("indesign")
 
 APP_NAME = "Adobe InDesign 2026"
+WIN_COM_ID = "InDesign.Application"
 
 # Minimal JSON polyfill for ExtendScript (which lacks native JSON)
 _JSON_POLYFILL = r"""
@@ -64,8 +66,15 @@ def _escape_jsx(s: str) -> str:
 
 
 def run_jsx(script: str, timeout: int = 60) -> str:
-    """Execute ExtendScript in InDesign via osascript. Returns the result as a string."""
+    """Execute ExtendScript in InDesign. Uses osascript on macOS, COM on Windows."""
     full_script = _JSON_POLYFILL + "\n" + script
+    if sys.platform == "win32":
+        return _run_jsx_win(full_script)
+    return _run_jsx_mac(full_script, timeout)
+
+
+def _run_jsx_mac(full_script: str, timeout: int) -> str:
+    """Execute ExtendScript via osascript (macOS)."""
     with tempfile.NamedTemporaryFile(suffix=".jsx", mode="w", delete=False) as f:
         f.write(full_script)
         tmp_path = f.name
@@ -86,6 +95,19 @@ def run_jsx(script: str, timeout: int = 60) -> str:
         return result.stdout.strip()
     finally:
         os.unlink(tmp_path)
+
+
+def _run_jsx_win(full_script: str) -> str:
+    """Execute ExtendScript via COM automation (Windows). Requires pywin32."""
+    import win32com.client
+
+    try:
+        app = win32com.client.Dispatch(WIN_COM_ID)
+        # 1246973031 = ScriptLanguage.JAVASCRIPT
+        result = app.DoScript(full_script, 1246973031)
+        return str(result) if result is not None else ""
+    except Exception as e:
+        raise RuntimeError(f"ExtendScript error: {e}")
 
 
 # ---------------------------------------------------------------------------
