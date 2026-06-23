@@ -2,7 +2,7 @@
   "mcpServers": {
     "indesign": {
       "command": "uv",
-      "args": ["run", "--python", "3.13", "--with", "mcp[cli]", "mcp", "run", "server.py"]
+      "args": ["run", "--python", "3.13", "--with", "mcp[cli]", "mcp", "run", "/Users/matthijsholter/Documents/vardoger/server.py"]
     }
   }
 }

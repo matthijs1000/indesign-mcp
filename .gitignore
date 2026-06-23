@@ -22,5 +22,8 @@ __pycache__/
 *.pyc
 .venv/
 
+# Reference material (large zips, InDesign packages)
+cairn-2e/
+
 # Claude Code local state
 .claude/
