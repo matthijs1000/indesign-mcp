@@ -1,0 +1,26 @@
+# InDesign files (too large for git)
+*.indd
+*.idlk
+*.indb
+
+# Screenshots and working images
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.tiff
+*.tif
+*.pdf
+
+# Working documents
+*.md
+!README.md
+!CLAUDE.md
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Claude Code local state
+.claude/

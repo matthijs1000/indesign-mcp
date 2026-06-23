@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "indesign": {
+      "command": "uv",
+      "args": ["run", "--python", "3.13", "--with", "mcp[cli]", "mcp", "run", "server.py"]
+    }
+  }
+}
